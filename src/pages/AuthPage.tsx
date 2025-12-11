@@ -34,7 +34,7 @@ export default function AuthPage() {
 
   useEffect(() => {
     if (user) {
-      navigate("/src/pages/admin /AdminDashboard.tsx");
+      navigate("/dashboard");
     }
   }, [user, navigate]);
 
@@ -90,7 +90,7 @@ export default function AuthPage() {
             title: "Account created!",
             description: "Welcome to QuizMaster!",
           });
-          navigate("/src/pages/admin /AdminDashboard.tsx");
+          navigate("/dashboard");
         }
       } else {
         const { error } = await signIn(email, password);
@@ -105,7 +105,7 @@ export default function AuthPage() {
             title: "Welcome back!",
             description: "You've been successfully logged in.",
           });
-          navigate("/src/pages/admin /AdminDashboard.tsx");
+          navigate("/dashboard");
         }
       }
     } finally {
