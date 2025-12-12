@@ -21,6 +21,7 @@ import AdminCourses from "./pages/admin/AdminCourses";
 import AdminQuestions from "./pages/admin/AdminQuestions";
 import AdminTests from "./pages/admin/AdminTests";
 import AdminUsers from "./pages/admin/AdminUsers";
+import AdminSettings from "./pages/admin/AdminSettings";
 import TestCreator from "./pages/admin/TestCreator";
 import TestEditor from "./pages/admin/TestEditor";
 import PDFTestList from "./pages/admin/PDFTestList";
@@ -62,7 +63,7 @@ const App = () => (
             <Route path="/admin/pdf-tests/create" element={<PDFTestCreate />} />
             <Route path="/admin/pdf-tests/:testId/edit" element={<PDFTestEditor />} />
             <Route path="/admin/users" element={<AdminUsers />} />
-            <Route path="/admin/settings" element={<AdminDashboard />} />
+            <Route path="/admin/settings" element={<AdminSettings />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
