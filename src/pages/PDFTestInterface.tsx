@@ -88,34 +88,64 @@ export default function PDFTestInterface() {
         setTestData(test);
         setTimeLeft(test.duration_minutes * 60);
 
-        // Fetch questions
-        const { data: testQuestions, error: questionsError } = await supabase
-          .from('test_questions')
+        // Fetch questions from test_section_questions (PDF Tests)
+        const { data: sectionQuestions, error: sectionQuestionsError } = await supabase
+          .from('test_section_questions')
           .select(`
-            question_id,
-            order_index,
-            questions (
-              id,
-              question_type,
-              marks,
-              negative_marks,
-              pdf_page_number,
-              question_number
+            id,
+            question_number,
+            marks,
+            negative_marks,
+            pdf_page,
+            correct_answer,
+            section_id,
+            test_sections!inner (
+              section_type
             )
           `)
           .eq('test_id', testId)
-          .order('order_index');
+          .order('question_number');
 
-        if (!questionsError && testQuestions) {
-          const qs = testQuestions.map((tq: any, index: number) => ({
-            id: tq.questions.id,
-            question_number: tq.questions.question_number || index + 1,
-            question_type: tq.questions.question_type || 'single',
-            marks: tq.questions.marks || 4,
-            negative_marks: tq.questions.negative_marks || 1,
-            pdf_page_number: tq.questions.pdf_page_number || 1
+        if (!sectionQuestionsError && sectionQuestions && sectionQuestions.length > 0) {
+          const qs = sectionQuestions.map((q: any) => ({
+            id: q.id,
+            question_number: q.question_number,
+            question_type: q.test_sections?.section_type || 'single_choice',
+            marks: q.marks || 4,
+            negative_marks: q.negative_marks || 1,
+            pdf_page_number: q.pdf_page || 1
           }));
           setQuestions(qs);
+        } else {
+          // Fallback to test_questions table for non-PDF tests
+          const { data: testQuestions, error: questionsError } = await supabase
+            .from('test_questions')
+            .select(`
+              question_id,
+              order_index,
+              questions (
+                id,
+                question_type,
+                marks,
+                negative_marks,
+                pdf_page_number,
+                question_number
+              )
+            `)
+            .eq('test_id', testId)
+            .order('order_index');
+
+          if (!questionsError && testQuestions) {
+            const qs = testQuestions.map((tq: any, index: number) => ({
+              id: tq.questions.id,
+              question_number: tq.questions.question_number || index + 1,
+              question_type: tq.questions.question_type || 'single',
+              marks: tq.questions.marks || 4,
+              negative_marks: tq.questions.negative_marks || 1,
+              pdf_page_number: tq.questions.pdf_page_number || 1
+            }));
+            setQuestions(qs);
+          }
         }
 
         // Get PDF URL if exists
