@@ -6,13 +6,16 @@ import {
   Clock, 
   BookOpen, 
   Zap,
-  Star
+  Star,
+  CheckCircle2,
+  BarChart3
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Course {
   id: string;
@@ -29,6 +32,8 @@ interface Test {
   test_type: string;
   question_count: number;
   attempt_count: number;
+  user_attempted: boolean;
+  user_completed: boolean;
 }
 
 const difficultyColors: Record<string, string> = {
@@ -43,10 +48,14 @@ export default function TestLibrary() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [tests, setTests] = useState<Test[]>([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (user) {
+      fetchData();
+    }
+  }, [user]);
 
   const fetchData = async () => {
     // Fetch courses
@@ -69,13 +78,21 @@ export default function TestLibrary() {
       .eq("is_published", true);
 
     if (testsData) {
-      // Get attempt counts and proper question counts
+      // Get attempt counts and user's attempts
       const testsWithCounts = await Promise.all(
         testsData.map(async (test) => {
           const { count: attemptCount } = await supabase
             .from("test_attempts")
             .select("*", { count: "exact", head: true })
             .eq("test_id", test.id);
+
+          // Check if current user has attempted
+          const { data: userAttempt } = await supabase
+            .from("test_attempts")
+            .select("id, completed_at")
+            .eq("test_id", test.id)
+            .eq("user_id", user!.id)
+            .maybeSingle();
 
           // For PDF tests, get question count from test_section_questions
           let questionCount = (test.test_questions as { count: number }[])?.[0]?.count || 0;
@@ -95,6 +112,8 @@ export default function TestLibrary() {
             test_type: test.test_type,
             question_count: questionCount,
             attempt_count: attemptCount || 0,
+            user_attempted: !!userAttempt,
+            user_completed: !!userAttempt?.completed_at,
           };
         })
       );
@@ -102,6 +121,16 @@ export default function TestLibrary() {
     }
 
     setLoading(false);
+  };
+
+  const handleTestClick = (test: Test) => {
+    if (test.user_completed) {
+      // Go to analysis page
+      navigate(`/test/${test.id}/analysis`);
+    } else {
+      // Go to test interface
+      navigate(test.test_type === 'pdf' ? `/pdf-test/${test.id}` : `/test/${test.id}`);
+    }
   };
 
   const filteredTests = tests.filter((test) => {
@@ -115,6 +144,7 @@ export default function TestLibrary() {
       full_length: "Full Length",
       topic: "Topic Test",
       mock: "Mock Test",
+      pdf: "PDF Test",
     };
     return labels[type] || type;
   };
@@ -213,13 +243,20 @@ export default function TestLibrary() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: index * 0.05 }}
-                  className="glass-card p-6 group hover:border-primary/40 transition-all"
+                  className="glass-card p-6 group hover:border-primary/40 transition-all cursor-pointer"
+                  onClick={() => handleTestClick(test)}
                 >
                   <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <span className="px-2 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium">
                         {getTestTypeLabel(test.test_type)}
                       </span>
+                      {test.user_completed && (
+                        <span className="px-2 py-1 rounded-md bg-success/10 text-success text-xs font-medium flex items-center gap-1">
+                          <CheckCircle2 className="w-3 h-3" />
+                          Attempted
+                        </span>
+                      )}
                     </div>
                     <div className="flex items-center gap-1 text-warning">
                       <Star className="w-4 h-4 fill-warning" />
@@ -257,12 +294,27 @@ export default function TestLibrary() {
                         {test.attempt_count.toLocaleString()} attempts
                       </span>
                     </div>
-                    <Link to={test.test_type === 'pdf' ? `/pdf-test/${test.id}` : `/test/${test.id}`}>
-                      <Button variant="glass" size="sm" className="group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                        <Zap className="w-4 h-4" />
-                        Start
-                      </Button>
-                    </Link>
+                    <Button 
+                      variant="glass" 
+                      size="sm" 
+                      className="group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleTestClick(test);
+                      }}
+                    >
+                      {test.user_completed ? (
+                        <>
+                          <BarChart3 className="w-4 h-4" />
+                          Analysis
+                        </>
+                      ) : (
+                        <>
+                          <Zap className="w-4 h-4" />
+                          {test.user_attempted ? "Resume" : "Start"}
+                        </>
+                      )}
+                    </Button>
                   </div>
                 </motion.div>
               );

@@ -11,6 +11,7 @@ import TestLibrary from "./pages/TestLibrary";
 import TestInterface from "./pages/TestInterface";
 import PDFTestInterface from "./pages/PDFTestInterface";
 import TestAnalysis from "./pages/TestAnalysis";
+import QuestionWiseAnalysis from "./pages/QuestionWiseAnalysis";
 import ProfilePage from "./pages/ProfilePage";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminCourses from "./pages/admin/AdminCourses";
@@ -42,7 +43,7 @@ const App = () => (
             <Route path="/tests" element={<TestLibrary />} />
             <Route path="/test/:testId" element={<TestInterface />} />
             <Route path="/pdf-test/:testId" element={<PDFTestInterface />} />
-            <Route path="/test/:testId/analysis" element={<TestAnalysis />} />
+            <Route path="/test/:testId/analysis" element={<QuestionWiseAnalysis />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/attempts" element={<Dashboard />} />
             <Route path="/analytics" element={<Dashboard />} />

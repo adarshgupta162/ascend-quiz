@@ -10,7 +10,8 @@ import {
   Clock,
   BookOpen,
   Save,
-  X
+  X,
+  Hash
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,6 +24,7 @@ interface Profile {
   full_name: string | null;
   avatar_url: string | null;
   target_exam: string | null;
+  roll_number: string | null;
 }
 
 interface Stats {
@@ -50,7 +52,7 @@ export default function ProfilePage() {
   const fetchProfile = async () => {
     const { data, error } = await supabase
       .from("profiles")
-      .select("full_name, avatar_url, target_exam")
+      .select("full_name, avatar_url, target_exam, roll_number")
       .eq("id", user!.id)
       .maybeSingle();
 
@@ -232,6 +234,16 @@ export default function ProfilePage() {
                 <div className="flex-1">
                   <div className="text-xs text-muted-foreground">Target Exam</div>
                   <div className="font-medium">{profile?.target_exam || "Not set"}</div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4 p-3 rounded-xl bg-secondary/30">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Hash className="w-5 h-5 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <div className="text-xs text-muted-foreground">Roll Number</div>
+                  <div className="font-medium font-mono">{profile?.roll_number || "Generating..."}</div>
                 </div>
               </div>
             </div>
