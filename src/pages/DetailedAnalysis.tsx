@@ -90,10 +90,16 @@ export default function DetailedAnalysis() {
       
       // Get PDF URL
       if (test.pdf_url) {
-        const { data: urlData } = await supabase.storage
+        const { data: urlData, error: urlError } = await supabase.storage
           .from("test-pdfs")
           .createSignedUrl(test.pdf_url, 3600 * 3);
-        if (urlData?.signedUrl) setPdfUrl(urlData.signedUrl);
+        
+        if (urlError) {
+          console.error("Failed to get PDF URL:", urlError);
+        }
+        if (urlData?.signedUrl) {
+          setPdfUrl(urlData.signedUrl);
+        }
       }
     }
 
