@@ -510,6 +510,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      user_completed_test: {
+        Args: { _test_id: string; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "admin" | "student"
