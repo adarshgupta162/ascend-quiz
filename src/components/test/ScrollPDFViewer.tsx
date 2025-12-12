@@ -27,6 +27,7 @@ export default function ScrollPDFViewer({
   const [currentPage, setCurrentPage] = useState(1);
   const containerRef = useRef<HTMLDivElement>(null);
   const pageRefs = useRef<Map<number, HTMLDivElement>>(new Map());
+  const lastScrolledPage = useRef<number | null>(null);
 
   const onDocumentLoadSuccess = useCallback(({ numPages }: { numPages: number }) => {
     setNumPages(numPages);
@@ -34,11 +35,15 @@ export default function ScrollPDFViewer({
     onLoadComplete?.(numPages);
   }, [onLoadComplete]);
 
-  // Scroll to target page when it changes
+  // Scroll to target page when it changes - only if it's a valid page number
   useEffect(() => {
-    if (targetPage && targetPage !== currentPage && pageRefs.current.has(targetPage)) {
+    // Skip if targetPage is undefined/null or same as last scrolled page
+    if (!targetPage || targetPage === lastScrolledPage.current) return;
+    
+    if (pageRefs.current.has(targetPage)) {
       const pageElement = pageRefs.current.get(targetPage);
       pageElement?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      lastScrolledPage.current = targetPage;
     }
   }, [targetPage]);
 
