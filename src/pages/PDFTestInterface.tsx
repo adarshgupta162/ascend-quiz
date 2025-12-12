@@ -711,7 +711,7 @@ export default function PDFTestInterface() {
 
   // Test phase
   const TestContent = (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="h-screen bg-background flex flex-col overflow-hidden">
       {/* Section Taskbar */}
       <SectionTaskbar
         sections={sections}
@@ -722,9 +722,9 @@ export default function PDFTestInterface() {
         viewedQuestions={viewedQuestions}
       />
 
-      <div className="flex-1 flex min-h-0">
-        {/* PDF Viewer (Left - 70%) - has its own scroll */}
-        <div className="h-full overflow-hidden" style={{ width: '70%' }}>
+      <div className="flex-1 flex min-h-0 overflow-hidden">
+        {/* PDF Viewer (Left - 70%) - scrolls independently */}
+        <div className="h-full overflow-auto" style={{ width: '70%' }}>
           {pdfUrl ? (
             <ScrollPDFViewer
               pdfUrl={pdfUrl}
@@ -740,8 +740,8 @@ export default function PDFTestInterface() {
           )}
         </div>
 
-        {/* OMR Panel (Right - 30%) - has its own scroll */}
-        <div className="h-full overflow-hidden border-l border-border" style={{ width: '30%' }}>
+        {/* OMR Panel (Right - 30%) - fixed, does NOT scroll with PDF */}
+        <div className="h-full border-l border-border" style={{ width: '30%' }}>
           <EnhancedOMRPanel
             questions={questions}
             filteredQuestionIds={filteredQuestionIds}

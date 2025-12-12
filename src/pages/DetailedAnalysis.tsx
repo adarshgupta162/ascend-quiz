@@ -263,7 +263,7 @@ export default function DetailedAnalysis() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="h-screen bg-background flex flex-col overflow-hidden">
       {/* Header */}
       <header className="border-b border-border bg-card/80 backdrop-blur-xl sticky top-0 z-50">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
@@ -379,9 +379,9 @@ export default function DetailedAnalysis() {
           </motion.div>
         </div>
       ) : (
-        <div className="flex-1 flex min-h-0">
-          {/* PDF Viewer (Left) - has its own scroll */}
-          <div className="w-[65%] h-full overflow-hidden border-r border-border">
+        <div className="flex-1 flex min-h-0 overflow-hidden">
+          {/* PDF Viewer (Left) - scrolls independently */}
+          <div className="w-[65%] h-full overflow-auto border-r border-border">
             {pdfUrl ? (
               <ScrollPDFViewer
                 pdfUrl={pdfUrl}
@@ -394,8 +394,8 @@ export default function DetailedAnalysis() {
             )}
           </div>
 
-          {/* Analysis Panel (Right) - has its own scroll */}
-          <div className="w-[35%] h-full flex flex-col overflow-hidden bg-card/30">
+          {/* Analysis Panel (Right) - fixed, does NOT scroll with PDF */}
+          <div className="w-[35%] h-full flex flex-col bg-card/30">
             {/* Question Palette */}
             <div className="p-4 border-b border-border">
               <h3 className="text-sm font-medium mb-3">Question Palette</h3>
