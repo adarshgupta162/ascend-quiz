@@ -41,6 +41,7 @@ export default function AdminSettings() {
   const [isSending, setIsSending] = useState(false);
   const [sendProgress, setSendProgress] = useState({ sent: 0, total: 0 });
   const [isLoading, setIsLoading] = useState(true);
+  const [isClearingAttempts, setIsClearingAttempts] = useState(false);
   
   // Platform settings
   const [platformSettings, setPlatformSettings] = useState({
@@ -176,6 +177,31 @@ export default function AdminSettings() {
       URL.revokeObjectURL(url);
       
       toast({ title: "Users exported successfully" });
+    }
+  };
+
+  const handleClearAttempts = async () => {
+    if (!confirm("Are you sure you want to delete ALL test attempts? This action cannot be undone!")) {
+      return;
+    }
+    
+    setIsClearingAttempts(true);
+    
+    const { error } = await supabase
+      .from('test_attempts')
+      .delete()
+      .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all records
+    
+    setIsClearingAttempts(false);
+    
+    if (error) {
+      toast({ 
+        title: "Failed to clear attempts", 
+        description: error.message,
+        variant: "destructive" 
+      });
+    } else {
+      toast({ title: "All test attempts cleared successfully" });
     }
   };
 
@@ -500,7 +526,15 @@ export default function AdminSettings() {
                   <p className="text-sm text-muted-foreground mb-4">
                     Remove all test attempt records (use with caution)
                   </p>
-                  <Button variant="destructive" className="w-full">
+                  <Button 
+                    variant="destructive" 
+                    className="w-full"
+                    onClick={handleClearAttempts}
+                    disabled={isClearingAttempts}
+                  >
+                    {isClearingAttempts ? (
+                      <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                    ) : null}
                     Clear Attempts
                   </Button>
                 </div>
