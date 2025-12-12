@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
-import { motion, useInView } from "framer-motion";
-import { useRef, useEffect, useState } from "react";
-import { 
+import { motion } from "framer-motion";
+import {
   BookOpen, 
   Trophy, 
   Target, 
@@ -15,10 +14,7 @@ import {
   Shield,
   GraduationCap,
   Atom,
-  FlaskConical,
-  ChevronDown,
-  Users,
-  Award
+  FlaskConical
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -88,12 +84,6 @@ const examTypes = [
   }
 ];
 
-const stats = [
-  { value: 5000, suffix: "+", label: "Students", icon: Users },
-  { value: 500, suffix: "+", label: "Tests Available", icon: FileText },
-  { value: 10000, suffix: "+", label: "Questions", icon: BookOpen },
-  { value: 95, suffix: "%", label: "Satisfaction", icon: Award }
-];
 
 const faqs = [
   {
@@ -122,41 +112,6 @@ const faqs = [
   }
 ];
 
-// Animated Counter Component
-function AnimatedCounter({ value, suffix = "", duration = 2 }: { value: number; suffix?: string; duration?: number }) {
-  const [count, setCount] = useState(0);
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
-
-  useEffect(() => {
-    if (!isInView) return;
-
-    let startTime: number;
-    let animationFrame: number;
-
-    const animate = (timestamp: number) => {
-      if (!startTime) startTime = timestamp;
-      const progress = Math.min((timestamp - startTime) / (duration * 1000), 1);
-      
-      // Easing function for smooth animation
-      const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-      setCount(Math.floor(easeOutQuart * value));
-
-      if (progress < 1) {
-        animationFrame = requestAnimationFrame(animate);
-      }
-    };
-
-    animationFrame = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animationFrame);
-  }, [isInView, value, duration]);
-
-  return (
-    <span ref={ref}>
-      {count.toLocaleString()}{suffix}
-    </span>
-  );
-}
 
 export default function LandingPage() {
   return (
@@ -268,29 +223,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Animated Stats Section */}
-      <section className="relative z-10 py-12 border-t border-border/50">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
-            {stats.map((stat, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="glass-card p-6 text-center group hover:scale-105 transition-transform duration-300"
-              >
-                <stat.icon className="w-8 h-8 text-primary mx-auto mb-3 group-hover:scale-110 transition-transform" />
-                <div className="text-3xl md:text-4xl font-bold font-display gradient-text mb-1">
-                  <AnimatedCounter value={stat.value} suffix={stat.suffix} />
-                </div>
-                <div className="text-sm text-muted-foreground">{stat.label}</div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Exam Types Section */}
       <section id="exams" className="relative z-10 py-16 border-t border-border/50">
