@@ -33,10 +33,10 @@ interface AdminLayoutProps {
 }
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true); // Default to collapsed
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, isAdmin, isLoading, signOut } = useAuth();
+  const { user, isAdmin, isLoading, signOut, setViewMode } = useAuth();
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -122,13 +122,16 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           </nav>
 
           {/* Back to Student View */}
-          <Link
-            to="/dashboard"
+          <button
+            onClick={() => {
+              setViewMode('student');
+              navigate("/dashboard");
+            }}
             className="flex items-center gap-3 px-3 py-3 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors mb-2"
           >
             <Sparkles className="w-5 h-5 flex-shrink-0" />
             {!collapsed && <span className="font-medium">Student View</span>}
-          </Link>
+          </button>
 
           {/* Collapse Button */}
           <button

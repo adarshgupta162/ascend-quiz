@@ -10,11 +10,14 @@ import {
   LogOut,
   Sparkles,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Shield,
+  Users
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
+import { Button } from "@/components/ui/button";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
@@ -30,10 +33,10 @@ interface DashboardLayoutProps {
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true); // Default to collapsed
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, isLoading, signOut } = useAuth();
+  const { user, isLoading, signOut, isAdmin, viewMode, setViewMode } = useAuth();
 
   // Auth guard - redirect unauthenticated users
   useEffect(() => {
@@ -45,6 +48,16 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const handleSignOut = async () => {
     await signOut();
     navigate('/auth');
+  };
+
+  const toggleViewMode = () => {
+    const newMode = viewMode === 'admin' ? 'student' : 'admin';
+    setViewMode(newMode);
+    if (newMode === 'admin') {
+      navigate('/admin');
+    } else {
+      navigate('/dashboard');
+    }
   };
 
   // Show loading while checking auth
@@ -87,6 +100,47 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               </motion.span>
             )}
           </Link>
+
+          {/* Admin View Toggle */}
+          {isAdmin && (
+            <button
+              onClick={toggleViewMode}
+              className={cn(
+                "flex items-center gap-3 px-3 py-3 rounded-lg mb-4 transition-all duration-200",
+                viewMode === 'admin'
+                  ? "bg-primary/10 text-primary border border-primary/20"
+                  : "bg-secondary/50 text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {viewMode === 'admin' ? (
+                <>
+                  <Shield className="w-5 h-5 flex-shrink-0" />
+                  {!collapsed && (
+                    <motion.span
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="font-medium text-sm"
+                    >
+                      Admin Mode
+                    </motion.span>
+                  )}
+                </>
+              ) : (
+                <>
+                  <Users className="w-5 h-5 flex-shrink-0" />
+                  {!collapsed && (
+                    <motion.span
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="font-medium text-sm"
+                    >
+                      Student Mode
+                    </motion.span>
+                  )}
+                </>
+              )}
+            </button>
+          )}
 
           {/* Navigation */}
           <nav className="flex-1 space-y-1">

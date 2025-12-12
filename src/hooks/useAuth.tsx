@@ -7,6 +7,8 @@ interface AuthContextType {
   session: Session | null;
   isLoading: boolean;
   isAdmin: boolean;
+  viewMode: 'admin' | 'student';
+  setViewMode: (mode: 'admin' | 'student') => void;
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any; isAdmin?: boolean }>;
   signOut: () => Promise<void>;
@@ -20,6 +22,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [viewMode, setViewMode] = useState<'admin' | 'student'>('student');
 
   const checkAdminRole = useCallback(async (userId: string): Promise<boolean> => {
     const { data, error } = await supabase
@@ -31,7 +34,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     const adminStatus = !!data && !error;
     setIsAdmin(adminStatus);
+    // Set view mode based on role
+    if (adminStatus) {
+      const savedMode = localStorage.getItem('viewMode') as 'admin' | 'student' | null;
+      setViewMode(savedMode || 'admin');
+    } else {
+      setViewMode('student');
+    }
     return adminStatus;
+  }, []);
+
+  const handleSetViewMode = useCallback((mode: 'admin' | 'student') => {
+    setViewMode(mode);
+    localStorage.setItem('viewMode', mode);
   }, []);
 
   const refreshRole = useCallback(async (): Promise<boolean> => {
@@ -60,6 +75,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           }, 0);
         } else {
           setIsAdmin(false);
+          setViewMode('student');
         }
       }
     );
@@ -111,6 +127,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     setIsAdmin(false);
+    setViewMode('student');
+    localStorage.removeItem('viewMode');
     await supabase.auth.signOut();
   };
 
@@ -119,7 +137,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       user, 
       session, 
       isLoading, 
-      isAdmin, 
+      isAdmin,
+      viewMode,
+      setViewMode: handleSetViewMode,
       signUp, 
       signIn, 
       signOut,
