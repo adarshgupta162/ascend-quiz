@@ -11,7 +11,10 @@ import {
   Sparkles,
   FileText,
   Clock,
-  Shield
+  Shield,
+  GraduationCap,
+  Atom,
+  FlaskConical
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -48,6 +51,33 @@ const features = [
   }
 ];
 
+const examTypes = [
+  {
+    icon: Atom,
+    title: "JEE Mains",
+    description: "75 questions • 3 hours",
+    subjects: ["Physics", "Chemistry", "Mathematics"],
+    color: "from-blue-500/20 to-cyan-500/20",
+    borderColor: "border-blue-500/30"
+  },
+  {
+    icon: Zap,
+    title: "JEE Advanced",
+    description: "54 questions • 3 hours per paper",
+    subjects: ["Physics", "Chemistry", "Mathematics"],
+    color: "from-purple-500/20 to-pink-500/20",
+    borderColor: "border-purple-500/30"
+  },
+  {
+    icon: FlaskConical,
+    title: "NEET",
+    description: "200 questions • 3 hours 20 mins",
+    subjects: ["Physics", "Chemistry", "Biology"],
+    color: "from-green-500/20 to-emerald-500/20",
+    borderColor: "border-green-500/30"
+  }
+];
+
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background overflow-hidden">
@@ -69,8 +99,9 @@ export default function LandingPage() {
           </Link>
           
           <nav className="hidden md:flex items-center gap-8">
+            <a href="#exams" className="text-muted-foreground hover:text-foreground transition-colors">Exams</a>
             <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">Features</a>
-            <a href="#about" className="text-muted-foreground hover:text-foreground transition-colors">About</a>
+            <a href="#preview" className="text-muted-foreground hover:text-foreground transition-colors">Preview</a>
           </nav>
 
           <div className="flex items-center gap-3">
@@ -85,7 +116,7 @@ export default function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative z-10 py-20 md:py-32">
+      <section className="relative z-10 py-20 md:py-28">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <motion.div
@@ -157,10 +188,194 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="relative z-10 py-20 border-t border-border/50">
+      {/* Exam Types Section */}
+      <section id="exams" className="relative z-10 py-16 border-t border-border/50">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold font-display mb-4">
+              Prepare for <span className="gradient-text">Top Exams</span>
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Practice tests designed to match the exact pattern of major competitive exams.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {examTypes.map((exam, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className={`glass-card p-6 border ${exam.borderColor} relative overflow-hidden group hover:scale-105 transition-transform duration-300`}
+              >
+                <div className={`absolute inset-0 bg-gradient-to-br ${exam.color} opacity-50`} />
+                <div className="relative z-10">
+                  <div className="w-14 h-14 rounded-2xl bg-background/80 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <exam.icon className="w-7 h-7 text-primary" />
+                  </div>
+                  <h3 className="text-2xl font-bold font-display mb-2">{exam.title}</h3>
+                  <p className="text-muted-foreground text-sm mb-4">{exam.description}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {exam.subjects.map((subject, i) => (
+                      <span key={i} className="px-3 py-1 rounded-full bg-background/60 text-xs font-medium">
+                        {subject}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Interface Preview Section */}
+      <section id="preview" className="relative z-10 py-16 border-t border-border/50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold font-display mb-4">
+              Experience the <span className="gradient-text">Test Interface</span>
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Our split-view interface shows the PDF question paper alongside an OMR-style answer panel.
+            </p>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="max-w-6xl mx-auto"
+          >
+            <div className="glass-card p-2 md:p-4 rounded-2xl border border-border/50 shadow-2xl">
+              {/* Mock Browser Header */}
+              <div className="flex items-center gap-2 px-3 py-2 border-b border-border/50 mb-3">
+                <div className="flex gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-destructive/60" />
+                  <div className="w-3 h-3 rounded-full bg-warning/60" />
+                  <div className="w-3 h-3 rounded-full bg-success/60" />
+                </div>
+                <div className="flex-1 flex justify-center">
+                  <div className="px-4 py-1 rounded-lg bg-muted/50 text-xs text-muted-foreground">
+                    phynetix.com/test
+                  </div>
+                </div>
+              </div>
+
+              {/* Mock Interface */}
+              <div className="grid md:grid-cols-[1fr_340px] gap-4 p-2">
+                {/* PDF Preview Area */}
+                <div className="bg-muted/30 rounded-xl p-4 min-h-[300px] md:min-h-[400px] flex flex-col">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-sm font-medium text-muted-foreground">PDF Question Paper</span>
+                    <div className="flex gap-2">
+                      <div className="w-8 h-8 rounded-lg bg-background/60 flex items-center justify-center">
+                        <span className="text-xs">−</span>
+                      </div>
+                      <div className="w-8 h-8 rounded-lg bg-background/60 flex items-center justify-center">
+                        <span className="text-xs">+</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex-1 bg-background/40 rounded-lg p-4 space-y-3">
+                    <div className="text-center text-sm font-semibold text-muted-foreground mb-4">JEE Main 2024 - Paper 1</div>
+                    <div className="space-y-2">
+                      <div className="h-3 bg-muted/40 rounded w-full" />
+                      <div className="h-3 bg-muted/40 rounded w-5/6" />
+                      <div className="h-3 bg-muted/40 rounded w-4/5" />
+                    </div>
+                    <div className="pt-4 space-y-2">
+                      <div className="text-xs text-muted-foreground font-medium">Q1. A particle moves in a straight line...</div>
+                      <div className="pl-4 space-y-1 text-xs text-muted-foreground">
+                        <div>(A) 2 m/s²</div>
+                        <div>(B) 4 m/s²</div>
+                        <div>(C) 6 m/s²</div>
+                        <div>(D) 8 m/s²</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* OMR Panel Preview */}
+                <div className="bg-muted/30 rounded-xl p-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-sm font-medium text-muted-foreground">OMR Panel</span>
+                    <div className="px-3 py-1 rounded-lg bg-primary/20 text-primary text-xs font-medium">
+                      02:45:30
+                    </div>
+                  </div>
+                  
+                  {/* Question Status */}
+                  <div className="grid grid-cols-4 gap-2 mb-4">
+                    <div className="flex items-center gap-1 text-xs">
+                      <div className="w-3 h-3 rounded bg-success/60" />
+                      <span className="text-muted-foreground">Answered</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-xs">
+                      <div className="w-3 h-3 rounded bg-muted/60" />
+                      <span className="text-muted-foreground">Unseen</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-xs">
+                      <div className="w-3 h-3 rounded bg-warning/60" />
+                      <span className="text-muted-foreground">Skipped</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-xs">
+                      <div className="w-3 h-3 rounded bg-purple-500/60" />
+                      <span className="text-muted-foreground">Review</span>
+                    </div>
+                  </div>
+
+                  {/* Question Grid */}
+                  <div className="bg-background/40 rounded-lg p-3 mb-4">
+                    <div className="text-xs text-muted-foreground mb-2">Question 1 of 75</div>
+                    <div className="grid grid-cols-2 gap-2">
+                      {['A', 'B', 'C', 'D'].map((opt, i) => (
+                        <div 
+                          key={opt} 
+                          className={`px-4 py-2 rounded-lg text-center text-sm font-medium transition-colors cursor-pointer ${
+                            i === 1 ? 'bg-primary text-primary-foreground' : 'bg-muted/50 hover:bg-muted'
+                          }`}
+                        >
+                          {opt}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Question Palette */}
+                  <div className="bg-background/40 rounded-lg p-3">
+                    <div className="text-xs text-muted-foreground mb-2">Question Palette</div>
+                    <div className="grid grid-cols-5 gap-1.5">
+                      {[...Array(15)].map((_, i) => (
+                        <div 
+                          key={i} 
+                          className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-medium ${
+                            i === 0 ? 'bg-success/60 text-success-foreground' :
+                            i < 3 ? 'bg-success/40' :
+                            i === 3 ? 'bg-primary text-primary-foreground ring-2 ring-primary' :
+                            i === 5 ? 'bg-purple-500/60' :
+                            'bg-muted/40'
+                          }`}
+                        >
+                          {i + 1}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section id="features" className="relative z-10 py-16 border-t border-border/50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold font-display mb-4">
               Why Choose <span className="gradient-text">PhyNetix</span>
             </h2>
@@ -190,12 +405,13 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* About Section */}
-      <section id="about" className="relative z-10 py-20 border-t border-border/50">
+      {/* CTA Section */}
+      <section className="relative z-10 py-16 border-t border-border/50">
         <div className="container mx-auto px-4">
           <div className="glass-card p-8 md:p-12 text-center relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-primary opacity-5" />
             <div className="relative z-10">
+              <GraduationCap className="w-12 h-12 text-primary mx-auto mb-4" />
               <h2 className="text-3xl md:text-4xl font-bold font-display mb-4">
                 Start Your Preparation Today
               </h2>
